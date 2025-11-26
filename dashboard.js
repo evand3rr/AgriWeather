@@ -2,153 +2,167 @@
    CONFIG
 --------------------------- */
 const OPENWEATHER_API_KEY = "c368040ce39d305547014657e08dd988";
-const DEFAULT_CITY = "Kigali";
 
 /* --------------------------
-   DOM ELEMENTS
+   DOM ELEMENTS (Weather)
 --------------------------- */
-const temperatureEl = document.getElementById("temperature");
-const descriptionEl = document.getElementById("description");
-const cityNameEl = document.getElementById("city-name");
-const weatherIconEl = document.getElementById("weather-icon");
+const tempEl = document.getElementById("w-temp");
+const descEl = document.getElementById("w-desc");
+const iconEl = document.getElementById("w-icon");
 
-const windEl = document.getElementById("wind");
-const humidityEl = document.getElementById("humidity");
-const pressureEl = document.getElementById("pressure");
-const visibilityEl = document.getElementById("visibility");
-const sunriseEl = document.getElementById("sunrise");
-const sunsetEl = document.getElementById("sunset");
+const humidityEl = document.getElementById("w-humidity");
+const windEl = document.getElementById("w-wind");
+const rainEl = document.getElementById("w-rain");
 
-const updatedTimeEl = document.getElementById("updated-time");
+const updatedEl = document.getElementById("updated-time");
 
 const searchBtn = document.getElementById("search-btn");
-const geoBtn = document.getElementById("geo-btn");
 const cityInput = document.getElementById("city-input");
+const geoBtn = document.getElementById("geo-btn");
+
+const locationEl = document.getElementById("user-location");
 
 /* --------------------------
-   UI UPDATE FUNCTION
+   DOM ELEMENTS (Profile)
 --------------------------- */
-function updateUI(data) {
-    console.log("Updating UI with:", data);
+const userNameEl = document.getElementById("user-name");
+const userRoleEl = document.getElementById("user-role");
+const activeCropsEl = document.getElementById("active-crops");
+const farmSizeEl = document.getElementById("farm-size");
 
-    temperatureEl.textContent = `${data.main.temp} °C`;
-    descriptionEl.textContent = data.weather[0].description;
-    cityNameEl.textContent = `${data.name}, ${data.sys.country}`;
+/* --------------------------
+   WEATHER UI UPDATE
+--------------------------- */
+function updateWeatherUI(data) {
+    console.log("Updating dashboard UI:", data);
 
-    weatherIconEl.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-
-    windEl.textContent = `${data.wind.speed} m/s`;
+    tempEl.textContent = `${data.main.temp.toFixed(1)}°C`;
+    descEl.textContent = data.weather[0].description;
     humidityEl.textContent = `${data.main.humidity}%`;
-    pressureEl.textContent = `${data.main.pressure} hPa`;
-    visibilityEl.textContent = `${data.visibility / 1000} km`;
+    windEl.textContent = `${data.wind.speed} m/s`;
 
-    sunriseEl.textContent = new Date(data.sys.sunrise * 1000).toLocaleTimeString();
-    sunsetEl.textContent = new Date(data.sys.sunset * 1000).toLocaleTimeString();
+    const rainChance = data.rain?.["1h"] ? `${data.rain["1h"]}%` : "0%";
+    rainEl.textContent = rainChance;
 
-    updatedTimeEl.textContent = new Date().toLocaleTimeString();
+    iconEl.textContent = ""; // clear icon text
+    iconEl.innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png">`;
+
+    locationEl.textContent = `${data.name}, ${data.sys.country}`;
+
+    updatedEl.textContent = new Date().toLocaleTimeString();
 }
 
 /* --------------------------
-   FETCH WEATHER (CITY)
+   FETCH WEATHER — CITY
 --------------------------- */
 async function fetchWeatherByCity(city) {
-    console.log("Fetching weather for city:", city);
-
     try {
         const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${OPENWEATHER_API_KEY}`
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_API_KEY}&units=metric`
         );
 
         const data = await res.json();
-        console.log("City weather result:", data);
 
         if (data.cod !== 200) {
-            alert("City not found. Try again.");
+            alert("City not found");
             return;
         }
 
-        updateUI(data);
-
+        updateWeatherUI(data);
     } catch (err) {
-        console.error("City weather error:", err);
-        descriptionEl.textContent = "Failed to load weather";
+        console.error("City fetch error:", err);
     }
 }
 
 /* --------------------------
-   FETCH WEATHER (GPS)
+   FETCH WEATHER — GPS
 --------------------------- */
 async function fetchWeatherByCoords(lat, lon) {
-    console.log("Fetching weather for coords:", lat, lon);
-
     try {
         const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPENWEATHER_API_KEY}`
+            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`
         );
 
         const data = await res.json();
-        console.log("GPS weather result:", data);
-
-        if (data.cod !== 200) {
-            console.warn("GPS weather failed, falling back to default city.");
-            fetchWeatherByCity(DEFAULT_CITY);
-            return;
-        }
-
-        updateUI(data);
-
+        updateWeatherUI(data);
     } catch (err) {
-        console.error("GPS fetch failed:", err);
-        fetchWeatherByCity(DEFAULT_CITY);
+        console.error("GPS fetch error:", err);
     }
 }
 
 /* --------------------------
-   TRY GPS FIRST
+   INIT WEATHER
 --------------------------- */
-function initWeatherSystem() {
-    console.log("Initializing weather system...");
-
+function initWeather() {
     if (!navigator.geolocation) {
-        console.warn("Geolocation NOT supported — using default city.");
-        fetchWeatherByCity(DEFAULT_CITY);
+        console.warn("GPS not supported — using Kigali");
+        fetchWeatherByCity("Kigali");
         return;
     }
 
     navigator.geolocation.getCurrentPosition(
-        (pos) => {
-            console.log("GPS success:", pos.coords);
-            fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
-        },
-        (err) => {
-            console.warn("GPS denied:", err);
-            console.log("Using default city instead:", DEFAULT_CITY);
-            fetchWeatherByCity(DEFAULT_CITY);
+        pos => fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude),
+        err => {
+            console.warn("GPS denied — using Kigali");
+            fetchWeatherByCity("Kigali");
         }
     );
 }
 
 /* --------------------------
-   EVENT LISTENERS
+   LOAD USER PROFILE
 --------------------------- */
+async function loadUserProfile() {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            console.warn("No user logged in — redirecting to login");
+            window.location.href = "login.html";
+            return;
+        }
 
-// Search button
-searchBtn.addEventListener("click", () => {
-    const city = cityInput.value.trim();
-    if (city.length === 0) {
-        alert("Enter a valid city name");
-        return;
+        const userId = user.id;
+
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .single();
+
+        if (error) {
+            console.error("Failed to fetch profile:", error);
+            return;
+        }
+
+        // Update profile section
+        userNameEl.textContent = data.username || "Farmer";
+        userRoleEl.textContent = data.is_officer ? "Agriculture Officer" : "Farmer";
+        locationEl.textContent = data.location || locationEl.textContent;
+        activeCropsEl.textContent = data.active_crops ? `${data.active_crops} Active Crops` : "-- Active Crops";
+        farmSizeEl.textContent = data.farm_size ? `${data.farm_size} Hectares` : "-- Hectares";
+
+    } catch (err) {
+        console.error("Error loading user profile:", err);
     }
-    fetchWeatherByCity(city);
-});
-
-// "Use My Location" button
-geoBtn.addEventListener("click", () => {
-    console.log("Manual GPS request...");
-    initWeatherSystem();
-});
+}
 
 /* --------------------------
-   START SYSTEM
+   EVENT LISTENERS
 --------------------------- */
-initWeatherSystem();
+if (searchBtn) {
+    searchBtn.addEventListener("click", () => {
+        const city = cityInput.value.trim();
+        if (!city) return alert("Enter a city name");
+        fetchWeatherByCity(city);
+    });
+}
+
+if (geoBtn) {
+    geoBtn.addEventListener("click", () => initWeather());
+}
+
+/* --------------------------
+   START
+--------------------------- */
+initWeather();
+loadUserProfile();
