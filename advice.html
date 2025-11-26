@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Crop Advice • AgriWeather</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="top-bar">
+    <h1>Crop Advice Board</h1>
+    <button onclick="logout()">Logout</button>
+  </header>
+
+  <div class="container">
+    <textarea id="advice-text" placeholder="Share crop advice..."></textarea>
+    <button onclick="postAdvice()">Post Advice</button>
+
+    <div id="advice-list"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="auth.js"></script>
+  <script src="advice.js"></script>
+
+</body>
+</html>

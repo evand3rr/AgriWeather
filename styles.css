@@ -1,0 +1,299 @@
+/* --------------------------------------------------
+   GLOBAL COLORS & THEME
+-------------------------------------------------- */
+:root {
+    --teal-dark: #0f766e;
+    --teal: #14b8a6;
+    --teal-light: #99f6e4;
+  
+    --green-pastel: #d8f3dc;
+    --green-light: #b7e4c7;
+    --green-medium: #95d5b2;
+  
+    --white: #ffffff;
+    --gray-light: #f4f4f4;
+    --gray: #8e9aaf;
+    --gray-dark: #5a6779;
+  
+    --card-bg: #f0faf8;
+  }
+  
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", Arial, sans-serif;
+  }
+  
+  body {
+    background: var(--green-pastel);
+    color: var(--gray-dark);
+    line-height: 1.5;
+    padding-bottom: 50px;
+  }
+  
+  .container {
+    width: 90%;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  /* --------------------------------------------------
+     HEADER BAR
+  -------------------------------------------------- */
+  .top-bar {
+    background: var(--teal-dark);
+    color: white;
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .top-bar button {
+    background: var(--teal-light);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--teal-dark);
+    transition: 0.2s;
+    font-weight: bold;
+  }
+  
+  .top-bar button:hover {
+    background: white;
+  }
+  
+  /* --------------------------------------------------
+     LOGIN PAGE
+  -------------------------------------------------- */
+  .login-container {
+    background: var(--white);
+    padding: 25px;
+    margin: 40px auto;
+    max-width: 400px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  
+  .login-container h1 {
+    color: var(--teal-dark);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 16px;
+    border: 1px solid var(--green-light);
+    border-radius: 8px;
+    background: var(--green-pastel);
+  }
+  
+  .login-container button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: var(--teal);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .login-container button:hover {
+    background: var(--teal-dark);
+  }
+  
+  /* --------------------------------------------------
+     SEARCH PANEL / WEATHER PAGE
+  -------------------------------------------------- */
+  .search-panel {
+    margin-top: 20px;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 11px rgba(0,0,0,0.06);
+  }
+  
+  .search-panel input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--green-light);
+    background: var(--green-pastel);
+    margin-bottom: 10px;
+  }
+  
+  .search-panel button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--teal);
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: 0.2s;
+  }
+  
+  .search-panel button:hover {
+    background: var(--teal-dark);
+  }
+  
+  .freshness {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--gray-dark);
+    font-size: 0.9rem;
+  }
+  
+  /* --------------------------------------------------
+     WEATHER DISPLAY
+  -------------------------------------------------- */
+  .weather-display {
+    text-align: center;
+    margin: 25px 0;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  
+  .weather-display img {
+    width: 120px;
+  }
+  
+  .weather-display h2 {
+    color: var(--teal-dark);
+    font-size: 32px;
+    margin-top: 10px;
+  }
+  
+  .weather-display p {
+    color: var(--gray-dark);
+    font-size: 18px;
+  }
+  
+  /* --------------------------------------------------
+     DETAILS BOX
+  -------------------------------------------------- */
+  .details {
+    padding: 20px;
+    background: var(--white);
+    border-radius: 12px;
+    margin-top: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  
+  .details h3 {
+    color: var(--teal-dark);
+    margin-bottom: 10px;
+  }
+  
+  .details p {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--green-light);
+  }
+  
+  /* --------------------------------------------------
+     NAVIGATION BUTTONS (Dashboard)
+  -------------------------------------------------- */
+  .nav-buttons button {
+    width: 100%;
+    padding: 15px;
+    background: var(--teal);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .nav-buttons button:hover {
+    background: var(--teal-dark);
+  }
+  
+  /* --------------------------------------------------
+     CARD ELEMENTS
+  -------------------------------------------------- */
+  .card {
+    background: var(--card-bg);
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 9px rgba(0,0,0,0.06);
+  }
+  
+  .card h4 {
+    margin-bottom: 6px;
+    color: var(--teal-dark);
+  }
+  
+  .card p {
+    margin-bottom: 8px;
+  }
+  
+  .card small {
+    color: var(--gray);
+  }
+  
+  /* Officer Highlight */
+  .officer {
+    border-left: 5px solid var(--teal-dark);
+    background: #e0fdf8;
+  }
+  
+  /* --------------------------------------------------
+     TEXTAREAS
+  -------------------------------------------------- */
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--green-medium);
+    background: var(--green-pastel);
+    margin-bottom: 15px;
+    resize: vertical;
+    font-size: 15px;
+  }
+  
+  /* Submit Buttons (Advice & Alerts) */
+  .container button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--teal);
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .container button:hover {
+    background: var(--teal-dark);
+  }
+  
+  /* --------------------------------------------------
+     FOOTER
+  -------------------------------------------------- */
+  footer {
+    margin-top: 30px;
+    text-align: center;
+    color: var(--gray-dark);
+    font-size: 0.9rem;
+  }
+  

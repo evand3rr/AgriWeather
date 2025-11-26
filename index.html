@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AgriWeather Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="login-container">
+    <h1>AgriWeather</h1>
+
+    <h2>Login</h2>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+
+    <h2>Create Account</h2>
+    <input id="su-email" type="email" placeholder="Email">
+    <input id="su-username" type="text" placeholder="Username">
+    <input id="su-password" type="password" placeholder="Password">
+
+    <label><input id="su-officer" type="checkbox"> I am an Extension Officer</label>
+    <button onclick="signup()">Create Account</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="auth.js"></script>
+
+</body>
+</html>

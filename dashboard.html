@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AgriWeather Dashboard</title>
+
+    <!-- Dashboard Styles -->
+    <link rel="stylesheet" href="dashboard.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabaseClient.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">🌤️ AgriWeather</div>
+
+        <div class="user-info">
+            <div class="freshness-indicator">
+                <div class="freshness-dot"></div>
+                <span id="freshness-text">Updating...</span>
+            </div>
+
+            <div class="user-avatar" id="user-avatar">--</div>
+
+            <div>
+                <div id="user-name" style="font-weight: 600;">Loading...</div>
+                <div id="user-role" style="font-size: 0.85rem; opacity: 0.9;">...</div>
+            </div>
+
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Welcome Section -->
+        <div class="welcome">
+            <h1 id="welcome-text">Welcome!</h1>
+            <p style="color: #666;">Here’s your farm overview</p>
+
+            <div class="farm-info">
+                <div class="info-item"><span>📍</span><strong id="user-location">--</strong></div>
+                <div class="info-item"><span>🌾</span><strong id="active-crops">-- Active Crops</strong></div>
+                <div class="info-item"><span>📏</span><strong id="farm-size">-- Hectares</strong></div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+
+            <!-- Weather Card -->
+            <div class="weather-card">
+                <h2>Current Weather</h2>
+
+                <div class="weather-main">
+                    <div>
+                        <div class="weather-temp" id="w-temp">--°C</div>
+                        <div id="w-desc" style="font-size: 1.2rem; opacity: 0.9;">
+                            Loading...
+                        </div>
+                    </div>
+                    <div class="weather-icon" id="w-icon">⛅</div>
+                </div>
+
+                <div class="weather-details">
+                    <div class="weather-detail">
+                        <div class="weather-detail-label">Humidity</div>
+                        <div class="weather-detail-value" id="w-humidity">--%</div>
+                    </div>
+
+                    <div class="weather-detail">
+                        <div class="weather-detail-label">Wind</div>
+                        <div class="weather-detail-value" id="w-wind">--</div>
+                    </div>
+
+                    <div class="weather-detail">
+                        <div class="weather-detail-label">Rain Chance</div>
+                        <div class="weather-detail-value" id="w-rain">--%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <h3>Quick Stats</h3>
+
+                <div class="stat-item">
+                    <span class="stat-label">Days to Harvest</span>
+                    <span class="stat-value">--</span>
+                </div>
+
+                <div class="stat-item">
+                    <span class="stat-label">Active Alerts</span>
+                    <span id="alert-count" class="stat-value">--</span>
+                </div>
+
+                <div class="stat-item">
+                    <span class="stat-label">Tasks Today</span>
+                    <span class="stat-value">--</span>
+                </div>
+
+                <div class="stat-item">
+                    <span class="stat-label">Forecast Accuracy</span>
+                    <span class="stat-value">--%</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Alerts Section -->
+        <div class="alerts-section">
+            <div class="section-header">
+                <h2>🚨 Active Alerts</h2>
+            </div>
+
+            <div class="alerts-grid" id="alerts-grid"></div>
+        </div>
+
+        <!-- Crop Advice Section -->
+        <div class="alerts-section">
+            <div class="section-header">
+                <h2>🌱 Crop Advice</h2>
+            </div>
+
+            <div class="crop-advice-grid" id="crop-grid"></div>
+        </div>
+
+        <!-- 7-Day Forecast -->
+        <div class="forecast-section">
+            <div class="section-header">
+                <h2>📅 7-Day Forecast</h2>
+
+                <div class="freshness-indicator">
+                    <div class="freshness-dot"></div>
+                    <span id="forecast-freshness">Updating...</span>
+                </div>
+            </div>
+
+            <div class="forecast-grid" id="forecast-grid"></div>
+        </div>
+
+    </div>
+
+    <!-- Dashboard Logic -->
+    <script src="dashboard.js"></script>
+
+</body>
+</html>
