@@ -1,5 +1,3 @@
-import { supabase } from './supabaseClient.js';
-
 /* --------------------------
    CONFIG
 --------------------------- */
@@ -240,6 +238,16 @@ if (searchBtn) {
 
 if (geoBtn) {
     geoBtn.addEventListener("click", () => initWeather());
+}
+
+async function logout() {
+  try {
+    await supabase.auth.signOut();
+  } catch (err) {
+    console.error('Error during logout', err);
+  } finally {
+    window.location.href = "login.html";
+  }
 }
 
 /* --------------------------
