@@ -1,213 +1,262 @@
 /* --------------------------
    CONFIG
 --------------------------- */
-const OPENWEATHER_API_KEY = "c368040ce39d305547014657e08dd988";
+// Avoid redeclaring if file is evaluated twice
+window.OPENWEATHER_API_KEY =
+  window.OPENWEATHER_API_KEY || "c368040ce39d305547014657e08dd988";
 
 /* --------------------------
    DOM ELEMENTS (Weather)
 --------------------------- */
-const tempEl = document.getElementById("w-temp");
-const descEl = document.getElementById("w-desc");
-const iconEl = document.getElementById("w-icon");
+window.tempEl = window.tempEl || document.getElementById("w-temp");
+window.descEl = window.descEl || document.getElementById("w-desc");
+window.iconEl = window.iconEl || document.getElementById("w-icon");
 
-const humidityEl = document.getElementById("w-humidity");
-const windEl = document.getElementById("w-wind");
-const rainEl = document.getElementById("w-rain");
+window.humidityEl = window.humidityEl || document.getElementById("w-humidity");
+window.windEl = window.windEl || document.getElementById("w-wind");
+window.rainEl = window.rainEl || document.getElementById("w-rain");
 
-const updatedEl = document.getElementById("updated-time");
+window.updatedEl =
+  window.updatedEl || document.getElementById("updated-time");
 
-const searchBtn = document.getElementById("search-btn");
-const cityInput = document.getElementById("city-input");
-const geoBtn = document.getElementById("geo-btn");
+window.searchBtn = window.searchBtn || document.getElementById("search-btn");
+window.cityInput =
+  window.cityInput || document.getElementById("city-input");
+window.geoBtn = window.geoBtn || document.getElementById("geo-btn");
 
-const locationEl = document.getElementById("user-location");
+window.locationEl =
+  window.locationEl || document.getElementById("user-location");
 
 /* --------------------------
    DOM ELEMENTS (Profile)
 --------------------------- */
-const userNameEl = document.getElementById("user-name");
-const userRoleEl = document.getElementById("user-role");
-const activeCropsEl = document.getElementById("active-crops");
-const farmSizeEl = document.getElementById("farm-size");
+window.userNameEl =
+  window.userNameEl || document.getElementById("user-name");
+window.userRoleEl =
+  window.userRoleEl || document.getElementById("user-role");
+window.activeCropsEl =
+  window.activeCropsEl || document.getElementById("active-crops");
+window.farmSizeEl =
+  window.farmSizeEl || document.getElementById("farm-size");
 
 // ---------- AUTH / CURRENT USER ----------
-let currentUser = null;
+window.currentUser = window.currentUser || null;
 
 async function loadCurrentUser() {
   const { data, error } = await supabase.auth.getUser();
   if (error) {
-    console.error('Error getting user', error);
+    console.error("Error getting user", error);
     return;
   }
-  currentUser = data.user;
+  window.currentUser = data.user;
 }
 
 /* --------------------------
    WEATHER UI UPDATE
 --------------------------- */
 function updateWeatherUI(data) {
-    console.log("Updating dashboard UI:", data);
+  console.log("Updating dashboard UI:", data);
 
-    tempEl.textContent = `${data.main.temp.toFixed(1)}°C`;
-    descEl.textContent = data.weather[0].description;
-    humidityEl.textContent = `${data.main.humidity}%`;
-    windEl.textContent = `${data.wind.speed} m/s`;
+  if (
+    !window.tempEl ||
+    !window.descEl ||
+    !window.humidityEl ||
+    !window.windEl ||
+    !window.rainEl ||
+    !window.locationEl ||
+    !window.updatedEl
+  ) {
+    console.warn("Weather UI elements missing – skipping update.");
+    return;
+  }
 
-    const rainChance = data.rain?.["1h"] ? `${data.rain["1h"]}%` : "0%";
-    rainEl.textContent = rainChance;
+  window.tempEl.textContent = `${data.main.temp.toFixed(1)}°C`;
+  window.descEl.textContent = data.weather[0].description;
+  window.humidityEl.textContent = `${data.main.humidity}%`;
+  window.windEl.textContent = `${data.wind.speed} m/s`;
 
-    iconEl.textContent = ""; // clear icon text
-    iconEl.innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png">`;
+  const rainChance = data.rain?.["1h"] ? `${data.rain["1h"]}%` : "0%";
+  window.rainEl.textContent = rainChance;
 
-    locationEl.textContent = `${data.name}, ${data.sys.country}`;
+  window.iconEl.textContent = "";
+  window.iconEl.innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png">`;
 
-    updatedEl.textContent = new Date().toLocaleTimeString();
+  window.locationEl.textContent = `${data.name}, ${data.sys.country}`;
+  window.updatedEl.textContent = new Date().toLocaleTimeString();
 }
 
 /* --------------------------
    FETCH WEATHER — CITY
 --------------------------- */
 async function fetchWeatherByCity(city) {
-    try {
-        const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_API_KEY}&units=metric`
-        );
+  try {
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+        city
+      )}&appid=${window.OPENWEATHER_API_KEY}&units=metric`
+    );
 
-        const data = await res.json();
+    const data = await res.json();
 
-        if (data.cod !== 200) {
-            alert("City not found");
-            return;
-        }
-
-        updateWeatherUI(data);
-    } catch (err) {
-        console.error("City fetch error:", err);
+    if (data.cod !== 200) {
+      alert("City not found");
+      return;
     }
+
+    updateWeatherUI(data);
+  } catch (err) {
+    console.error("City fetch error:", err);
+  }
 }
 
 /* --------------------------
    FETCH WEATHER — GPS
 --------------------------- */
 async function fetchWeatherByCoords(lat, lon) {
-    try {
-        const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric`
-        );
+  try {
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${window.OPENWEATHER_API_KEY}&units=metric`
+    );
 
-        const data = await res.json();
-        updateWeatherUI(data);
-    } catch (err) {
-        console.error("GPS fetch error:", err);
-    }
+    const data = await res.json();
+    updateWeatherUI(data);
+  } catch (err) {
+    console.error("GPS fetch error:", err);
+  }
 }
 
 /* --------------------------
    INIT WEATHER
 --------------------------- */
 function initWeather() {
-    if (!navigator.geolocation) {
-        console.warn("GPS not supported — using Kigali");
-        fetchWeatherByCity("Kigali");
-        return;
-    }
+  if (!navigator.geolocation) {
+    console.warn("GPS not supported — using Kigali");
+    fetchWeatherByCity("Kigali");
+    return;
+  }
 
-    navigator.geolocation.getCurrentPosition(
-        pos => fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude),
-        err => {
-            console.warn("GPS denied — using Kigali");
-            fetchWeatherByCity("Kigali");
-        }
-    );
+  navigator.geolocation.getCurrentPosition(
+    (pos) =>
+      fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude),
+    (err) => {
+      console.warn("GPS denied — using Kigali", err);
+      fetchWeatherByCity("Kigali");
+    }
+  );
 }
 
 /* --------------------------
    LOAD USER PROFILE
 --------------------------- */
 async function loadUserProfile() {
-    try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            console.warn("No user logged in — redirecting to login");
-            window.location.href = "login.html";
-            return;
-        }
-
-        const userId = user.id;
-
-        const { data, error } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", userId)
-            .single();
-
-        if (error) {
-            console.error("Failed to fetch profile:", error);
-            return;
-        }
-
-        // Update profile section
-        userNameEl.textContent = data.username || "Farmer";
-        userRoleEl.textContent = data.is_officer ? "Agriculture Officer" : "Farmer";
-        locationEl.textContent = data.location || locationEl.textContent;
-        activeCropsEl.textContent = data.active_crops ? `${data.active_crops} Active Crops` : "-- Active Crops";
-        farmSizeEl.textContent = data.farm_size ? `${data.farm_size} Hectares` : "-- Hectares";
-
-    } catch (err) {
-        console.error("Error loading user profile:", err);
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      console.warn("No user logged in — redirecting to login");
+      window.location.href = "index.html";
+      return;
     }
+
+    const userId = user.id;
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      // Likely 406 if profile row doesn't exist yet
+      console.warn("No profile row yet, using defaults.");
+      return;
+    }
+
+    if (window.userNameEl) {
+      window.userNameEl.textContent = data.username || "Farmer";
+    }
+    if (window.userRoleEl) {
+      window.userRoleEl.textContent = data.is_officer
+        ? "Agriculture Officer"
+        : "Farmer";
+    }
+    if (window.locationEl && data.location) {
+      window.locationEl.textContent =
+        data.location || window.locationEl.textContent;
+    }
+    if (window.activeCropsEl) {
+      window.activeCropsEl.textContent = data.active_crops
+        ? `${data.active_crops} Active Crops`
+        : "-- Active Crops";
+    }
+    if (window.farmSizeEl) {
+      window.farmSizeEl.textContent = data.farm_size
+        ? `${data.farm_size} Hectares`
+        : "-- Hectares";
+    }
+  } catch (err) {
+    console.error("Error loading user profile:", err);
+  }
 }
 
-// ---------- FARMER QUESTIONS (front-end) ----------
+/* --------------------------
+   FARMER QUESTIONS
+--------------------------- */
+window.questionForm =
+  window.questionForm || document.getElementById("question-form");
+window.questionTextEl =
+  window.questionTextEl || document.getElementById("question-text");
+window.myQuestionsList =
+  window.myQuestionsList || document.getElementById("my-questions-list");
 
-// DOM elements
-const questionForm = document.getElementById('question-form');
-const questionTextEl = document.getElementById('question-text');
-const myQuestionsList = document.getElementById('my-questions-list');
-
-// handle form submit
-questionForm?.addEventListener('submit', async (e) => {
+window.questionForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (!currentUser) {
-    alert('You must be logged in to ask a question.');
+  if (!window.currentUser) {
+    alert("You must be logged in to ask a question.");
     return;
   }
 
-  const question = questionTextEl.value.trim();
+  const question = window.questionTextEl.value.trim();
   if (!question) return;
 
-  const { error } = await supabase.from('questions').insert({
-    user_id: currentUser.id,
-    question
+  const { error } = await supabase.from("questions").insert({
+    user_id: window.currentUser.id,
+    question,
   });
 
   if (error) {
     console.error(error);
-    alert('Could not send your question. Please try again.');
+    alert("Could not send your question. Please try again.");
     return;
   }
 
-  questionTextEl.value = '';
+  window.questionTextEl.value = "";
   await loadMyQuestions();
 });
 
-// load questions belonging to current user
 async function loadMyQuestions() {
-  if (!currentUser) return;
+  if (!window.currentUser) return;
+  if (!window.myQuestionsList) {
+    console.warn(
+      "my-questions-list element not found – skipping questions render."
+    );
+    return;
+  }
 
   const { data, error } = await supabase
-    .from('questions')
-    .select('*')
-    .eq('user_id', currentUser.id)
-    .order('created_at', { ascending: false });
+    .from("questions")
+    .select("*")
+    .eq("user_id", window.currentUser.id)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error(error);
     return;
   }
 
-  myQuestionsList.innerHTML = data
+  window.myQuestionsList.innerHTML = data
     .map((q) => {
       return `
         <div class="question-card">
@@ -221,47 +270,46 @@ async function loadMyQuestions() {
         </div>
       `;
     })
-    .join('');
+    .join("");
 }
-
-/* --------------------------
-   DOM ELEMENTS (Alerts & Advice on Dashboard)
---------------------------- */
-const alertsGridEl = document.getElementById("alerts-grid");
-const cropGridEl = document.getElementById("crop-grid");
-const alertCountEl = document.getElementById("alert-count");
-
 
 /* --------------------------
    EVENT LISTENERS
 --------------------------- */
-if (searchBtn) {
-    searchBtn.addEventListener("click", () => {
-        const city = cityInput.value.trim();
-        if (!city) return alert("Enter a city name");
-        fetchWeatherByCity(city);
-    });
+if (window.searchBtn) {
+  window.searchBtn.addEventListener("click", () => {
+    const city = window.cityInput.value.trim();
+    if (!city) return alert("Enter a city name");
+    fetchWeatherByCity(city);
+  });
 }
 
-if (geoBtn) {
-    geoBtn.addEventListener("click", () => initWeather());
+if (window.geoBtn) {
+  window.geoBtn.addEventListener("click", () => initWeather());
 }
 
 async function logout() {
   try {
     await supabase.auth.signOut();
   } catch (err) {
-    console.error('Error during logout', err);
+    console.error("Error during logout", err);
   } finally {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   }
 }
 
 /* --------------------------
-   DASHBOARD: Load Pest & Disease Alerts
+   DASHBOARD: Alerts & Advice
 --------------------------- */
+window.alertsGridEl =
+  window.alertsGridEl || document.getElementById("alerts-grid");
+window.cropGridEl =
+  window.cropGridEl || document.getElementById("crop-grid");
+window.alertCountEl =
+  window.alertCountEl || document.getElementById("alert-count");
+
 async function loadDashboardAlerts() {
-  if (!alertsGridEl) return;
+  if (!window.alertsGridEl) return;
 
   try {
     const { data, error } = await supabase
@@ -275,36 +323,78 @@ async function loadDashboardAlerts() {
     }
 
     if (!data || data.length === 0) {
-      alertsGridEl.innerHTML = `
-        <div class="empty-state">
-          <p>No active alerts right now.</p>
+      window.alertsGridEl.innerHTML = `
+        <div class="question-card">
+          No active alerts right now.
         </div>
       `;
-      if (alertCountEl) alertCountEl.textContent = "0";
+      if (window.alertCountEl) window.alertCountEl.textContent = "0";
       return;
     }
 
-    alertsGridEl.innerHTML = data
+    window.alertsGridEl.innerHTML = data
       .map((a) => {
         const created = new Date(a.created_at).toLocaleString();
         return `
           <div class="alert-card">
-            <div class="alert-header">
-              <span class="alert-title">Alert by ${a.profiles?.username || "Officer"}</span>
-              <span class="alert-time">${created}</span>
+            <div class="section-header">
+              <strong>${a.profiles?.username || "Officer"}</strong>
+              <span>${created}</span>
             </div>
-            <p class="alert-text">${a.text}</p>
+            <p>${a.text}</p>
           </div>
         `;
       })
       .join("");
 
-    if (alertCountEl) alertCountEl.textContent = data.length.toString();
+    if (window.alertCountEl)
+      window.alertCountEl.textContent = String(data.length);
   } catch (err) {
     console.error("Error loading dashboard alerts:", err);
   }
 }
 
+async function loadDashboardAdvice() {
+  if (!window.cropGridEl) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("advice")
+      .select("*, profiles(username)")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Failed to load dashboard advice:", error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      window.cropGridEl.innerHTML = `
+        <div class="question-card">
+          No crop advice has been posted yet.
+        </div>
+      `;
+      return;
+    }
+
+    window.cropGridEl.innerHTML = data
+      .map((a) => {
+        const created = new Date(a.created_at).toLocaleString();
+        return `
+          <div class="crop-card ${a.is_officer ? "officer" : ""}">
+            <h4>${a.profiles?.username || "Farmer"} ${
+          a.is_officer ? "(Officer)" : ""
+        }</h4>
+            <p>${a.text}</p>
+            <small>${created}</small>
+          </div>
+        `;
+      })
+      .join("");
+  } catch (err) {
+    console.error("Error loading dashboard advice:", err);
+  }
+}
 
 /* --------------------------
    START
@@ -312,14 +402,10 @@ async function loadDashboardAlerts() {
 initWeather();
 loadUserProfile();
 
-window.addEventListener('load', () => {
-    // if you already had other init functions, call them here too
-    loadCurrentUser().then(() => {
-      loadMyQuestions();
-      loadDashboardAlerts();
-      loadDashboardAdvice();
-      // initWeather();  // example: keep your existing initialisations
-    });
+window.addEventListener("load", () => {
+  loadCurrentUser().then(() => {
+    loadMyQuestions();
+    loadDashboardAlerts();
+    loadDashboardAdvice();
   });
-  
-  
+});

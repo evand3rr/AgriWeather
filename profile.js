@@ -9,8 +9,6 @@ const experienceEl = document.getElementById("experience");
 const statusEl = document.getElementById("status");
 const profileForm = document.getElementById("profile-form");
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 let userId;
 
 // Check if user is logged in
@@ -18,7 +16,7 @@ async function loadProfile() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
         return;
     }
 

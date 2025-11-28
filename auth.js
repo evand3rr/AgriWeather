@@ -11,7 +11,7 @@ async function login() {
     if (error) return alert(error.message);
     location.href = "dashboard.html";
   }
-  
+ 
   // Signup
   async function signup() {
     const email = document.getElementById("su-email").value;
@@ -21,24 +21,34 @@ async function login() {
   
     const { data, error } = await supabase.auth.signUp({
       email,
-      password: pass
+      password: pass,
     });
   
-    if (error) return alert(error.message);
-  
-    const userId = data.user?.id || data.session?.user?.id;
-
-    if (!userId) {
-        return alert("Check your email to verify your account before logging in.");
+    if (error) {
+      alert(error.message);
+      return;
     }
   
-    await supabase.from("profiles").insert({
-      id: user.id,
+    const userId = data.user?.id || data.session?.user?.id;
+  
+    if (!userId) {
+      alert("Account created! Please check your email to verify before logging in.");
+      return;
+    }
+  
+    const { error: profileError } = await supabase.from("profiles").insert({
+      id: userId,
       username,
-      is_officer: isOfficer
+      is_officer: isOfficer,
     });
   
-    alert("Account created! Please verify your email.");
+    if (profileError) {
+      console.error(profileError);
+      alert("Account created, but failed to save profile.");
+      return;
+    }
+  
+    alert("Account created! Please verify your email, then log in.");
   }
   
   // Get user + profile

@@ -1,5 +1,3 @@
-import { supabase } from './supabaseClient.js';
-
 const openListEl = document.getElementById('open-questions');
 const answeredListEl = document.getElementById('answered-questions');
 
