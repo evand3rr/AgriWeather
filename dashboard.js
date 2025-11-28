@@ -224,6 +224,13 @@ async function loadMyQuestions() {
     .join('');
 }
 
+/* --------------------------
+   DOM ELEMENTS (Alerts & Advice on Dashboard)
+--------------------------- */
+const alertsGridEl = document.getElementById("alerts-grid");
+const cropGridEl = document.getElementById("crop-grid");
+const alertCountEl = document.getElementById("alert-count");
+
 
 /* --------------------------
    EVENT LISTENERS
@@ -251,6 +258,55 @@ async function logout() {
 }
 
 /* --------------------------
+   DASHBOARD: Load Pest & Disease Alerts
+--------------------------- */
+async function loadDashboardAlerts() {
+  if (!alertsGridEl) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("pest_alerts")
+      .select("*, profiles(username)")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Failed to load dashboard alerts:", error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      alertsGridEl.innerHTML = `
+        <div class="empty-state">
+          <p>No active alerts right now.</p>
+        </div>
+      `;
+      if (alertCountEl) alertCountEl.textContent = "0";
+      return;
+    }
+
+    alertsGridEl.innerHTML = data
+      .map((a) => {
+        const created = new Date(a.created_at).toLocaleString();
+        return `
+          <div class="alert-card">
+            <div class="alert-header">
+              <span class="alert-title">Alert by ${a.profiles?.username || "Officer"}</span>
+              <span class="alert-time">${created}</span>
+            </div>
+            <p class="alert-text">${a.text}</p>
+          </div>
+        `;
+      })
+      .join("");
+
+    if (alertCountEl) alertCountEl.textContent = data.length.toString();
+  } catch (err) {
+    console.error("Error loading dashboard alerts:", err);
+  }
+}
+
+
+/* --------------------------
    START
 --------------------------- */
 initWeather();
@@ -260,6 +316,8 @@ window.addEventListener('load', () => {
     // if you already had other init functions, call them here too
     loadCurrentUser().then(() => {
       loadMyQuestions();
+      loadDashboardAlerts();
+      loadDashboardAdvice();
       // initWeather();  // example: keep your existing initialisations
     });
   });
